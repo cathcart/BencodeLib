@@ -11,6 +11,55 @@ public class BencodeEncoder
     {
     }
 
+    public string Encode(string input)
+    {
+        int inputInt;
+        var isInt = Int32.TryParse(input, out inputInt);
+
+        if (isInt == true)
+        {
+            return Encode(inputInt);
+        }
+        else
+        {
+            var s = string.Format("{0}:{1}", ((string)input).Length, input);
+            return s;
+        }
+    }
+
+    public string Encode(int input)
+    {
+        var s = string.Format("i{0}e", (input));
+        return s;
+    }
+
+    public string Encode(List<string> input)
+    {
+        var s = "l";
+        foreach (var x in input)
+        {
+            s += Encode(x);
+        }
+        s += "e";
+        return s;
+    }
+
+    public string Encode(Dictionary<string,string> input)
+    {
+        var inputDict = (Dictionary<string, string>)input;
+        var list = inputDict.Keys.ToList<string>();
+        list.Sort();
+
+        var s = "d";
+        foreach (var x in list)
+        {
+            s += Encode(x);
+            s += Encode(inputDict[x]);
+        }
+        s += "e";
+        return s;
+    }
+
     public string Encode(dynamic input)
     {
         if(input is string)
